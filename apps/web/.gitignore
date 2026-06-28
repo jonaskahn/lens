@@ -1,0 +1,34 @@
+# ── Nuxt build outputs ────────────────────────────────────────────────────────
+.nuxt/
+.output/
+dist/
+
+# ── Node / pnpm ───────────────────────────────────────────────────────────────
+node_modules/
+pnpm-lock.yaml
+.pnpm-store/
+
+# ── Generated / auto-typed files ─────────────────────────────────────────────
+app/types/api.d.ts
+
+# ── Environment ───────────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+# Vitest
+coverage/
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# ── TypeScript ────────────────────────────────────────────────────────────────
+*.tsbuildinfo
+
+# ── Misc ─────────────────────────────────────────────────────────────────────
+.DS_Store
+*.log

@@ -1,0 +1,54 @@
+# pre-commit hooks for lens.
+# Install: `make hooks` (or `uv run pre-commit install`).
+# Run manually: `make hooks-run` (or `uv run pre-commit run --all-files`).
+repos:
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+        types_or: [python, pyi]
+        files: '^(libs|apps)/.*\.py$'
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.0
+    hooks:
+      - id: ruff
+        args: ["--fix", "--exit-non-zero-on-fix"]
+        types_or: [python, pyi]
+        files: '^(libs|apps)/.*\.py$'
+      - id: ruff-format
+        types_or: [python, pyi]
+        files: '^(libs|apps)/.*\.py$'
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: uv run mypy
+        language: system
+        types: [python]
+        files: '^(libs/(domain|application))/.*\.py$'
+        args: ["--strict", "--config-file=pyproject.toml"]
+        pass_filenames: false
+      - id: pyright
+        name: pyright
+        entry: uv run pyright
+        language: system
+        types: [python]
+        files: '^(libs|apps)/.*\.py$'
+        pass_filenames: false
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        exclude: '\.md$'
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+      - id: debug-statements
+      - id: mixed-line-ending
+        args: ["--fix=lf"]

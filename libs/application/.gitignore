@@ -1,0 +1,15 @@
+# ── Python build artifacts ────────────────────────────────────────────────────
+dist/
+build/
+*.egg-info/
+
+# ── Local virtualenv (standalone use outside monorepo) ────────────────────────
+.venv/
+
+# ── pytest / coverage (local runs) ───────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── mypy incremental cache ────────────────────────────────────────────────────
+.mypy_cache/

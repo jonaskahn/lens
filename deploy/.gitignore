@@ -1,0 +1,20 @@
+# ── Compose secrets / local overrides ────────────────────────────────────────
+compose/.env
+compose/*.override.yml
+compose/*.local.yml
+
+# ── Kubernetes secrets (never commit real secrets) ────────────────────────────
+k8s/secrets/
+k8s/*.secret.yaml
+k8s/*.secret.yml
+
+# ── Generated / rendered manifests ───────────────────────────────────────────
+k8s/rendered/
+k8s/output/
+
+# ── Local build context ───────────────────────────────────────────────────────
+*.tar.gz
+*.tar
+
+# ── Misc ─────────────────────────────────────────────────────────────────────
+.DS_Store

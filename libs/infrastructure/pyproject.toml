@@ -1,0 +1,46 @@
+[project]
+name = "lens-infrastructure"
+version = "0.1.0"
+description = "Adapters: SQLAlchemy repos, RabbitMQ, crawl4ai, apprise, redis, blob storage"
+requires-python = ">=3.12,<3.14"
+readme = "README.md"
+dependencies = [
+    "lens-common",
+    "lens-domain",
+    "lens-application",
+    "sqlalchemy>=2.0,<3",
+    "asyncpg>=0.30",
+    "psycopg2-binary>=2.9",
+    "alembic>=1.15",
+    "aio-pika>=9.5",
+    "faststream[rabbit]>=0.7",
+    "redis>=6.0",
+    "crawl4ai>=0.5",
+    "lxml>=5.3",
+    "cssselect>=1.4",
+    "html5lib>=1.1",
+    "apprise>=1.9",
+    "jinja2>=3.1",
+    "cryptography>=44",
+    "boto3>=1.40",
+    "httpx>=0.28",
+    "scikit-learn>=1.6",
+    "hdbscan>=0.8",
+    "python-dotenv>=1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lens_infrastructure"]
+include = ["src/lens_infrastructure/py.typed"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/lens_infrastructure", "pyproject.toml", "src/lens_infrastructure/py.typed"]
+
+[tool.uv.sources]
+lens-common = { workspace = true }
+lens-domain = { workspace = true }
+lens-application = { workspace = true }

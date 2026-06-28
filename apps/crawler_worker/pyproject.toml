@@ -1,0 +1,33 @@
+[project]
+name = "lens-crawler"
+version = "0.1.0"
+description = "Crawler worker: fetches URLs (crawl4ai), normalizes, diffs, persists"
+requires-python = ">=3.12,<3.14"
+readme = "README.md"
+dependencies = [
+    "lens-common",
+    "lens-domain",
+    "lens-application",
+    "lens-infrastructure",
+    "faststream[rabbit]>=0.7",
+    "crawl4ai>=0.5",
+]
+
+[project.scripts]
+lens-crawler = "lens_crawler.main:run"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lens_crawler"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/lens_crawler", "pyproject.toml"]
+
+[tool.uv.sources]
+lens-common = { workspace = true }
+lens-domain = { workspace = true }
+lens-application = { workspace = true }
+lens-infrastructure = { workspace = true }

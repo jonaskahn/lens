@@ -1,0 +1,408 @@
+@import "tailwindcss";
+@plugin "tailwindcss-primeui";
+
+@theme inline {
+  --color-ink: var(--lens-ink);
+  --color-ink-soft: var(--lens-ink-soft);
+  --color-ground: var(--lens-ground);
+  --color-panel: var(--lens-panel);
+  --color-graticule: var(--lens-graticule);
+  --color-graph: var(--lens-graph);
+  --color-lens-primary: var(--lens-primary);
+  --color-lens-secondary: var(--lens-secondary);
+  --color-lens-signal: var(--lens-signal);
+  --color-lens-warn: var(--lens-warn);
+  --color-lens-alarm: var(--lens-alarm);
+  --color-lens-info: var(--lens-info);
+
+  --font-display: "Bodoni Moda", "Cormorant Garamond", Georgia, serif;
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+
+/* Light — warm-neutral "antique parchment" surfaces (hue ~286, low chroma).
+   Periwinkle primary (hue 275), warm-orange secondary, signal teal, alarm red. */
+:root {
+  --lens-ink: oklch(21% 0.006 285.885);
+  --lens-ink-soft: oklch(46% 0.008 285.885);
+  --lens-ground: oklch(96% 0.001 286.375);
+  --lens-panel: oklch(98% 0 0);
+  --lens-graticule: oklch(90% 0.005 286.32);
+  --lens-graph: oklch(58% 0.006 285.885);
+
+  --lens-primary: oklch(55% 0.115 274.713);
+  --lens-primary-soft: oklch(78% 0.115 274.713);
+  --lens-secondary: oklch(70% 0.128 66.29);
+  --lens-signal: oklch(55% 0.14 182.503);
+  --lens-warn: oklch(70% 0.184 86.047);
+  --lens-alarm: oklch(54% 0.246 16.439);
+  --lens-info: oklch(58% 0.169 237.323);
+
+  --lens-radius: 2px;
+  --lens-graticule-stroke: 1px;
+  font-family: var(--font-sans);
+  color: var(--lens-ink);
+  background: var(--lens-ground);
+}
+
+/* Dark — inverted battleship housing, lifted periwinkle primary. */
+.p-dark {
+  --lens-ink: oklch(92% 0.004 286.32);
+  --lens-ink-soft: oklch(74% 0.006 286.32);
+  --lens-ground: oklch(20% 0.005 285.823);
+  --lens-panel: oklch(24% 0.005 285.823);
+  --lens-graticule: oklch(32% 0.006 285.885);
+  --lens-graph: oklch(56% 0.006 285.885);
+
+  --lens-primary: oklch(72% 0.115 274.713);
+  --lens-primary-soft: oklch(78% 0.115 274.713);
+  --lens-secondary: oklch(78% 0.128 66.29);
+  --lens-signal: oklch(72% 0.14 182.503);
+  --lens-warn: oklch(82% 0.184 86.047);
+  --lens-alarm: oklch(70% 0.246 16.439);
+  --lens-info: oklch(72% 0.169 237.323);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+body {
+  background: var(--lens-ground);
+  color: var(--lens-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Eyebrow / data captions — instrument labels feel. */
+.eyebrow,
+.data-mono,
+code, kbd, samp, pre {
+  font-family: var(--font-mono);
+}
+
+::selection {
+  background: var(--lens-primary);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--lens-primary);
+  outline-offset: 2px;
+  border-radius: var(--lens-radius);
+}
+
+/* Hairline graticule underlay — a barely-visible ruled grid like an instrument face. */
+.graticule {
+  background-image:
+    linear-gradient(to right, var(--lens-graticule) 0 1px, transparent 1px 100%),
+    linear-gradient(to bottom, var(--lens-graticule) 0 1px, transparent 1px 100%);
+  background-size: 64px 64px, 64px 64px;
+  background-position: -0.5px -0.5px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Type scale — Bodoni carries display, Plex carries everything else.
+ * ------------------------------------------------------------------ */
+.t-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--lens-graph);
+}
+
+/* ------------------------------------------------------------------ *
+ * Chrome components
+ * ------------------------------------------------------------------ */
+
+/* Engraved nameplate page header. */
+.nameplate {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid var(--lens-graticule);
+}
+.nameplate__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2rem, 1.4rem + 1.6vw, 2.75rem);
+  line-height: 1;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.nameplate__eyebrow {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.6875rem;
+  color: var(--lens-graph);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.nameplate__eyebrow::before {
+  content: "";
+  width: 0.5rem;
+  height: 1px;
+  background: var(--lens-primary);
+}
+
+/* Squared, hairline-bordered panel used in place of shadowy cards. */
+.panel {
+  background: var(--lens-panel);
+  border: 1px solid var(--lens-graticule);
+  border-radius: var(--lens-radius);
+}
+
+/* Reticle corner ticks — a thin |+| lens crosshair, used on the sidebar mark and hero corner marks. */
+.reticle {
+  position: relative;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.reticle::before,
+.reticle::after {
+  content: "";
+  position: absolute;
+  background: var(--lens-primary);
+}
+.reticle::before {
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  transform: translateX(-0.5px);
+}
+.reticle::after {
+  top: 50%;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  transform: translateY(-0.5px);
+}
+
+/* ------------------------------------------------------------------ *
+ * Aperture bar — dashboard signature.
+ * Every tracked URL is a single vertical hairline on a time axis.
+ * ------------------------------------------------------------------ */
+.aperture {
+  position: relative;
+  height: 5.5rem;
+  border: 1px solid var(--lens-graticule);
+  background:
+    linear-gradient(to right,
+      transparent 0,
+      transparent calc(25% - 0.5px),
+      var(--lens-graticule) calc(25% - 0.5px) calc(25% + 0.5px),
+      transparent calc(25% + 0.5px)),
+    linear-gradient(to right,
+      transparent 0,
+      transparent calc(50% - 0.5px),
+      var(--lens-graticule) calc(50% - 0.5px) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)),
+    linear-gradient(to right,
+      transparent 0,
+      transparent calc(75% - 0.5px),
+      var(--lens-graticule) calc(75% - 0.5px) calc(75% + 0.5px),
+      transparent calc(75% + 0.5px)),
+    var(--lens-panel);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+}
+.aperture__rail {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+}
+.aperture__tick {
+  position: absolute;
+  top: 18%;
+  bottom: 18%;
+  width: 1px;
+  transform-origin: center;
+  transition: transform 0.25s ease;
+}
+.aperture__tick:hover {
+  transform: scaleX(2.5);
+}
+.aperture__tick[data-state="Idle"]      { background: var(--lens-graph); }
+.aperture__tick[data-state="Crawling"]   { background: var(--lens-primary); }
+.aperture__tick[data-state="Enqueued"]   { background: var(--lens-secondary); }
+.aperture__tick[data-state="Error"]      { background: var(--lens-alarm); }
+.aperture__tick[data-state="Disabled"]   { background: var(--lens-graph); opacity: 0.35; }
+.aperture__axis {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1.6rem;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  color: var(--lens-graph);
+}
+.aperture__legend {
+  display: flex;
+  gap: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--lens-graph);
+  flex-wrap: wrap;
+}
+.aperture__legend i {
+  display: inline-block;
+  width: 0.75rem;
+  height: 1px;
+  vertical-align: middle;
+  margin-right: 0.25rem;
+}
+
+/* Stat dial — the small "instrument readout" card. */
+.dial {
+  padding: 1rem 1.125rem 1.125rem;
+  border: 1px solid var(--lens-graticule);
+  background: var(--lens-panel);
+  border-radius: var(--lens-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.dial__label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.625rem;
+  color: var(--lens-graph);
+}
+.dial__value {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 2.25rem;
+  line-height: 1;
+  color: var(--lens-ink);
+  font-variant-numeric: tabular-nums;
+}
+.dial[data-alarm] .dial__value { color: var(--lens-alarm); }
+
+/* Section ruler — a numbered marker only where it's truly a sequence.
+   Used in changes/timeline-style content. Most pages should NOT use this. */
+
+/* Reduced-motion accomodation. */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * PrimeVue component cohere — flatten & square to match the instrument
+ * language (unlayered rules beat PrimeVue's `primevue` layer).
+ * ------------------------------------------------------------------ */
+.p-card {
+  border: 1px solid var(--lens-graticule);
+  background: var(--lens-panel);
+  border-radius: var(--lens-radius);
+  box-shadow: none;
+}
+.p-card .p-card-caption { gap: 0; }
+.p-tag {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--lens-radius);
+  padding: 0.125rem 0.5rem;
+}
+.p-button {
+  border-radius: var(--lens-radius);
+  font-family: var(--font-sans);
+}
+.p-datatable .p-datatable-thead > tr > th {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.625rem;
+  color: var(--lens-graph);
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  background: transparent;
+  border-color: var(--lens-graticule);
+}
+.p-datatable .p-datatable-tbody > tr > td {
+  border-color: var(--lens-graticule);
+}
+.p-datatable .p-datatable-tbody > tr:hover {
+  background: color-mix(in srgb, var(--lens-primary) 8%, transparent);
+}
+.p-dialog {
+  border-radius: var(--lens-radius);
+  border: 1px solid var(--lens-graticule);
+}
+.p-dialog .p-dialog-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+}
+.p-confirmdialog {
+  max-width: calc(100vw - 2rem);
+}
+.p-confirmdialog .p-dialog-content {
+  align-items: flex-start;
+}
+.p-confirmdialog .p-confirmdialog-icon {
+  flex: 0 0 auto;
+  margin-top: 0.125rem;
+}
+.p-message {
+  border-radius: var(--lens-radius);
+}
+.p-inputtext,
+.p-select,
+.p-datepicker,
+.p-toggle-switch .p-toggle-switch-slider,
+.p-password,
+.p-textarea,
+.p-iftalabel {
+  border-radius: var(--lens-radius);
+}
+
+/* ------------------------------------------------------------------ *
+ * Dark-mode corrections for our own chrome (PrimeVue handles its own).
+ * ------------------------------------------------------------------ */
+.p-dark .aperture {
+  background:
+    linear-gradient(to right,
+      transparent 0,
+      transparent calc(25% - 0.5px),
+      var(--lens-graticule) calc(25% - 0.5px) calc(25% + 0.5px),
+      transparent calc(25% + 0.5px)),
+    linear-gradient(to right,
+      transparent 0,
+      transparent calc(50% - 0.5px),
+      var(--lens-graticule) calc(50% - 0.5px) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)),
+    linear-gradient(to right,
+      transparent 0,
+      transparent calc(75% - 0.5px),
+      var(--lens-graticule) calc(75% - 0.5px) calc(75% + 0.5px),
+      transparent calc(75% + 0.5px)),
+    var(--lens-panel);
+}

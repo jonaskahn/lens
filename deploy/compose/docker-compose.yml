@@ -1,0 +1,161 @@
+# lens - local development stack.
+#
+# Brings up infrastructure (postgres, rabbitmq, redis, minio) and stubs for the
+# per-role services. The per-role images are built and wired per app
+# (api, workers, ai; the cli is local-only).
+#
+# Usage:
+#   make up-infra   # infra only
+#   make up         # infra + all roles
+#   make logs
+#   make down
+
+name: lens
+
+x-app-base: &app-base
+  image: lens-base:latest
+  build:
+    context: ../..
+    dockerfile: deploy/docker/base.Dockerfile
+  env_file: [../../.env]
+  restart: unless-stopped
+  networks: [lens-net]
+  depends_on:
+    postgres:
+      condition: service_healthy
+    rabbitmq:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+    minio:
+      condition: service_healthy
+
+services:
+  # ---------------------------------------------------------------------------
+  # infrastructure
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: lens
+      POSTGRES_PASSWORD: lens
+      POSTGRES_DB: lens
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lens -d lens"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [lens-net]
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: lens
+      RABBITMQ_DEFAULT_PASS: lens
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    networks: [lens-net]
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks: [lens-net]
+
+  minio:
+    image: minio/minio:latest
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: lens
+      MINIO_ROOT_PASSWORD: lenslens
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [lens-net]
+
+  # ---------------------------------------------------------------------------
+  # application roles (stubs - each app's Dockerfile is added in its own step)
+  # ---------------------------------------------------------------------------
+  api:
+    <<: *app-base
+    profiles: ["full"]
+    command: ["lens-api"]
+    ports:
+      - "8000:8000"
+
+  scheduler:
+    <<: *app-base
+    profiles: ["full"]
+    command: ["lens-scheduler"]
+
+  crawler:
+    <<: *app-base
+    profiles: ["full"]
+    command: ["lens-crawler"]
+    deploy:
+      replicas: 1  # bump per-host in production; multiple replicas is the safe default
+
+  notifier:
+    <<: *app-base
+    profiles: ["full"]
+    command: ["lens-notifier"]
+
+  ai:
+    <<: *app-base
+    profiles: ["full", "ai"]
+    command: ["lens-ai"]
+
+  web:
+    profiles: ["full", "web"]
+    build:
+      context: ../..
+      dockerfile: deploy/docker/web.Dockerfile
+    environment:
+      NUXT_API_BASE_URL: http://api:8000/api/v1
+      NUXT_API_KEY: ${NUXT_API_KEY:-}
+      NUXT_SESSION_PASSWORD: ${NUXT_SESSION_PASSWORD:-change-me-minimum-32-characters}
+      NITRO_PORT: "3000"
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks: [lens-net]
+    depends_on:
+      api:
+        condition: service_started
+
+networks:
+  lens-net:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  rabbitmq-data:
+  redis-data:
+  minio-data:

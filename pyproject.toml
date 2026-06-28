@@ -1,0 +1,262 @@
+[project]
+name = "lens"
+version = "0.1.0"
+description = "API-first service for tracking HTML changes across many website domains"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+license = { text = "MIT" }
+authors = [{ name = "lens contributors" }]
+keywords = ["web-monitoring", "change-detection", "crawler", "notifications"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
+]
+dependencies = [
+    "uuid7>=0.1.0",
+]
+
+# ---------------------------------------------------------------------------
+# uv workspace (virtual root: this pyproject.toml is a meta-package only;
+# real packages live in libs/* and apps/*)
+# ---------------------------------------------------------------------------
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["libs/*", "apps/api", "apps/cli", "apps/scheduler", "apps/crawler_worker", "apps/notifier_worker", "apps/ai_worker"]
+
+[dependency-groups]
+dev = [
+    "black>=26.0.0",
+    "ruff>=0.11.0",
+    "mypy>=2.0.0",
+    "pyright>=1.1.400",
+    "pytest>=9.0.0",
+    "pytest-asyncio>=1.0.0",
+    "pytest-cov>=6.0.0",
+    "testcontainers>=4.10.0",
+    "pre-commit>=4.0.0",
+    "hatchling>=1.27.0",
+    "httpx2>=2.5.0",
+]
+
+# ---------------------------------------------------------------------------
+# ruff (lint + format)
+# ---------------------------------------------------------------------------
+[tool.black]
+line-length = 120
+target-version = ["py312", "py313"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  deploy
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+# ---------------------------------------------------------------------------
+# pyright (fast type-checker / Pylance backend)
+# ---------------------------------------------------------------------------
+[tool.pyright]
+pythonVersion = "3.12"
+pythonPlatform = "Linux"
+venvPath = "."
+venv = ".venv"
+include = [
+    "libs/domain/src",
+    "libs/application/src",
+    "libs/common/src",
+    "libs/infrastructure/src",
+    "apps/api/src",
+    "apps/cli/src",
+    "apps/scheduler/src",
+    "apps/crawler_worker/src",
+    "apps/notifier_worker/src",
+    "apps/ai_worker/src",
+]
+exclude = [
+    ".venv",
+    "deploy",
+    "build",
+    "dist",
+    "**/tests/**",
+    "**/__pycache__",
+]
+typeCheckingMode = "standard"
+reportMissingImports = true
+reportMissingTypeStubs = false
+reportUnknownVariableType = false
+reportUnknownMemberType = false
+reportUnknownArgumentType = false
+reportIncompatibleMethodOverride = false
+
+# ---------------------------------------------------------------------------
+# ruff (lint + format)
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+src = ["libs", "apps"]
+extend-exclude = [
+    "deploy",
+    ".venv",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "SIM", # flake8-simplify
+    "RUF", # ruff-specific rules
+    "N",   # pep8-naming
+    "C4",  # flake8-comprehensions
+    "PIE", # flake8-pie
+    "PT",  # flake8-pytest-style
+    "RET", # flake8-return
+    "TID", # flake8-tidy-imports
+]
+ignore = [
+    "E501", # line-too-long (formatter handles it)
+    "N818", # exception-name-suffix: domain/application exceptions follow the spec
+            # term (e.g. InvalidHostname), not the generic Error suffix; see
+            # CONVENTIONS.md §Naming.
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**/*.py" = ["S101", "PT011", "PT012"]
+"**/__init__.py" = ["F401"]
+"apps/api/src/lens_api/routers.py" = ["B008"]
+"apps/api/src/lens_api/auth.py" = ["B008"]
+"apps/cli/src/lens_cli/commands.py" = ["B008"]
+
+[tool.ruff.lint.isort]
+known-first-party = [
+    "lens_common",
+    "lens_domain",
+    "lens_application",
+    "lens_infrastructure",
+    "lens_api",
+    "lens_scheduler",
+    "lens_crawler",
+    "lens_notifier",
+    "lens_ai",
+    "lens_cli",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+# ---------------------------------------------------------------------------
+# mypy --strict (enforced on libs/domain and libs/application)
+# ---------------------------------------------------------------------------
+[tool.mypy]
+strict = true
+python_version = "3.12"
+mypy_path = [
+    "libs/domain/src",
+    "libs/application/src",
+    "libs/common/src",
+    "libs/infrastructure/src",
+    "apps/api/src",
+    "apps/cli/src",
+    "apps/scheduler/src",
+    "apps/crawler_worker/src",
+    "apps/notifier_worker/src",
+    "apps/ai_worker/src",
+]
+files = [
+    "libs/domain/src",
+    "libs/application/src",
+    "libs/common/src",
+    "libs/infrastructure/src",
+    "apps/api/src",
+    "apps/cli/src",
+    "apps/scheduler/src",
+    "apps/crawler_worker/src",
+    "apps/notifier_worker/src",
+    "apps/ai_worker/src",
+]
+plugins = ["pydantic.mypy"]
+warn_unused_ignores = true
+warn_return_any = true
+disallow_untyped_defs = true
+disallow_any_generics = true
+no_implicit_optional = true
+check_untyped_defs = true
+ignore_missing_imports = false
+show_error_codes = true
+exclude = [
+    ".*/tests/.*",
+    ".*/__pycache__/.*",
+    "^build/.*",
+    "^dist/.*",
+]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["uuid_extensions", "uuid7"]
+ignore_missing_imports = true
+
+# ---------------------------------------------------------------------------
+# pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = [
+    "-q",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=libs",
+    "--cov-report=term-missing",
+]
+asyncio_mode = "auto"
+testpaths = [
+    "libs/common/tests",
+    "libs/domain/tests",
+    "libs/application/tests",
+    "libs/infrastructure/tests",
+    "apps/api/tests",
+    "apps/cli/tests",
+]
+markers = [
+    "integration: marks tests as integration (deselect with '-m \"not integration\"')",
+]
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning:asyncpg.*",
+    "ignore::DeprecationWarning:pamqp.*",
+]
+
+# ---------------------------------------------------------------------------
+# coverage
+# ---------------------------------------------------------------------------
+[tool.coverage.run]
+branch = true
+source = ["libs"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+]
+show_missing = true
+fail_under = 0

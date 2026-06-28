@@ -1,0 +1,20 @@
+Subject: [lens] Change detected: {{ domain }}{% if category %} / {{ category }}{% endif %}
+
+A change was detected at {{ url }} ({{ checked_at }}).
+Added: {{ change.added_count }}  Removed: {{ change.removed_count }}  Score: {{ "%.2f"|format(change.semantic_score) }}
+
+{% if classification and classification is defined and classification.change_type %}
+AI Classification:
+  Type: {{ classification.change_type }}
+  Meaningful: {{ classification.is_meaningful }}
+  Severity: {{ classification.severity }}/5
+{% if classification.summary %}
+  Summary: {{ classification.summary }}
+{% endif %}
+{% if classification.extracted_fields %}
+  Extracted: {{ classification.extracted_fields | tojson }}
+{% endif %}
+
+{% endif %}
+----- diff -----
+{{ diff_snippet }}

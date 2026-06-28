@@ -1,0 +1,7 @@
+# ── Stray Python artifacts at the libs/ grouping level ───────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/

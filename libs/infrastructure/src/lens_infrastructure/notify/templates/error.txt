@@ -1,0 +1,4 @@
+Subject: [lens] Check failed: {{ url }}
+
+The check for {{ url }} failed at {{ checked_at }}.
+Error: {{ error }}

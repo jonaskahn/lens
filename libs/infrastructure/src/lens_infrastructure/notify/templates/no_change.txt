@@ -1,0 +1,3 @@
+Subject: [lens] No change (stale): {{ url }}
+
+{{ url }} has not changed and may be stale. Last checked {{ checked_at }}.

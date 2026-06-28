@@ -1,0 +1,35 @@
+[project]
+name = "lens-api"
+version = "0.1.0"
+description = "FastAPI HTTP entrypoint (REST API + admin)"
+requires-python = ">=3.12,<3.14"
+readme = "README.md"
+dependencies = [
+    "lens-common",
+    "lens-domain",
+    "lens-application",
+    "lens-infrastructure",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+    "gunicorn>=23",
+    "python-dotenv>=1.0",
+]
+
+[project.scripts]
+lens-api = "lens_api.main:run"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lens_api"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/lens_api", "pyproject.toml"]
+
+[tool.uv.sources]
+lens-common = { workspace = true }
+lens-domain = { workspace = true }
+lens-application = { workspace = true }
+lens-infrastructure = { workspace = true }

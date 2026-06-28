@@ -1,0 +1,24 @@
+[project]
+name = "lens-application"
+version = "0.1.0"
+description = "Use cases, ports (interfaces), DTOs, pipeline orchestrator"
+requires-python = ">=3.12,<3.14"
+readme = "README.md"
+dependencies = [
+    "lens-common",
+    "lens-domain",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lens_application"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/lens_application", "pyproject.toml"]
+
+[tool.uv.sources]
+lens-common = { workspace = true }
+lens-domain = { workspace = true }
